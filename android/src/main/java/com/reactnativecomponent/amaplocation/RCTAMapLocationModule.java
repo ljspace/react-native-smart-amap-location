@@ -162,7 +162,10 @@ public class RCTAMapLocationModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getReGeocode() {
-        locationOption.setNeedAddress(true);    //可选，设置是否返回逆地理地址信息。默认是true
+        if(locationOption != null) {
+            locationOption.setNeedAddress(true);    //可选，设置是否返回逆地理地址信息。默认是true
+        }
+        
         // 设置定位参数
         locationClient.setLocationOption(locationOption);
         // 启动定位
@@ -171,7 +174,9 @@ public class RCTAMapLocationModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getLocation() {
-        locationOption.setNeedAddress(false);    //可选，设置是否返回逆地理地址信息。默认是true
+        if(locationOption != null) {
+            locationOption.setNeedAddress(false);    //可选，设置是否返回逆地理地址信息。默认是true
+        }
         // 设置定位参数
         locationClient.setLocationOption(locationOption);
         // 启动定位
@@ -182,10 +187,12 @@ public class RCTAMapLocationModule extends ReactContextBaseJavaModule {
     public void startUpdatingLocation() {
         locationClient.startLocation();
 
+        long interval = locationOption.getInterval();
+
         if(null != alarm){
             //设置一个闹钟，2秒之后每隔一段时间执行启动一次定位程序
             alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2 * 1000,
-                    alarmInterval * 1000, alarmPi);
+                    interval, alarmPi);
         }
     }
 

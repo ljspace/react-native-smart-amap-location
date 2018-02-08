@@ -55,6 +55,7 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
     CLLocationAccuracy locationMode = kCLLocationAccuracyHundredMeters;
     BOOL pausesLocationUpdatesAutomatically = YES;
     BOOL allowsBackgroundLocationUpdates = NO;
+    BOOL needAddress = YES;
     int locationTimeout = DefaultLocationTimeout;
     int reGeocodeTimeout = DefaultReGeocodeTimeout;
     
@@ -74,6 +75,10 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
             allowsBackgroundLocationUpdates = [[options objectForKey:@"allowsBackgroundLocationUpdates"] boolValue];
         }
         
+        if([keys containsObject:@"needAddress"]) {
+            needAddress = [[options objectForKey:@"needAddress"] boolValue];
+        }
+        
         
         if([keys containsObject:@"locationTimeout"]) {
             locationTimeout = [[options objectForKey:@"locationTimeout"] intValue];
@@ -85,13 +90,16 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
     }
     
     //设置期望定位精度
-    [self.locationManager setDesiredAccuracy:locationMode];
+    [self.locationManager setDesiredAccuracy:locationMode];    
     
     //设置是否允许系统暂停定位
     [self.locationManager setPausesLocationUpdatesAutomatically:pausesLocationUpdatesAutomatically];
     
     //设置是否允许在后台定位
     [self.locationManager setAllowsBackgroundLocationUpdates:allowsBackgroundLocationUpdates];
+    
+    //设置是否返回逆地址
+    [self.locationManager setLocatingWithReGeocode:needAddress];
     
     //设置定位超时时间
     [self.locationManager setLocationTimeout:locationTimeout];
