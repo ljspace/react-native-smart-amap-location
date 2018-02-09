@@ -52,12 +52,13 @@ RCT_EXPORT_METHOD(init:(NSDictionary *)options)
 
 RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
 {
-    CLLocationAccuracy locationMode = kCLLocationAccuracyHundredMeters;
+    CLLocationAccuracy locationMode = kCLLocationAccuracyBest;
     BOOL pausesLocationUpdatesAutomatically = YES;
     BOOL allowsBackgroundLocationUpdates = NO;
     BOOL needAddress = YES;
     int locationTimeout = DefaultLocationTimeout;
     int reGeocodeTimeout = DefaultReGeocodeTimeout;
+    int distanceFilter = kCLDistanceFilterNone;
     
     if(options != nil) {
         
@@ -65,48 +66,46 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
         
         if([keys containsObject:@"locationMode"]) {
             locationMode = [[options objectForKey:@"locationMode"] doubleValue];
+            //设置期望定位精度
+            [self.locationManager setDesiredAccuracy:locationMode];
         }
         
         if([keys containsObject:@"pausesLocationUpdatesAutomatically"]) {
             pausesLocationUpdatesAutomatically = [[options objectForKey:@"pausesLocationUpdatesAutomatically"] boolValue];
+            //设置是否允许系统暂停定位
+            [self.locationManager setPausesLocationUpdatesAutomatically:pausesLocationUpdatesAutomatically];
         }
         
         if([keys containsObject:@"allowsBackgroundLocationUpdates"]) {
             allowsBackgroundLocationUpdates = [[options objectForKey:@"allowsBackgroundLocationUpdates"] boolValue];
+            //设置是否允许在后台定位
+            [self.locationManager setAllowsBackgroundLocationUpdates:allowsBackgroundLocationUpdates];
         }
         
         if([keys containsObject:@"needAddress"]) {
             needAddress = [[options objectForKey:@"needAddress"] boolValue];
+            //设置是否返回逆地址
+            [self.locationManager setLocatingWithReGeocode:needAddress];
         }
         
+        if([keys containsObject:@"distanceFilter"]) {
+            distanceFilter = [[options objectForKey:@"distanceFilter"] intValue];
+            //设置是否返回逆地址
+            [self.locationManager setDistanceFilter:distanceFilter];
+        }
         
         if([keys containsObject:@"locationTimeout"]) {
             locationTimeout = [[options objectForKey:@"locationTimeout"] intValue];
+            //设置定位超时时间
+            [self.locationManager setLocationTimeout:locationTimeout];
         }
         
         if([keys containsObject:@"reGeocodeTimeout"]) {
             reGeocodeTimeout = [[options objectForKey:@"reGeocodeTimeout"] intValue];
+            //设置逆地理超时时间
+            [self.locationManager setReGeocodeTimeout:reGeocodeTimeout];
         }
     }
-    
-    //设置期望定位精度
-    [self.locationManager setDesiredAccuracy:locationMode];    
-    
-    //设置是否允许系统暂停定位
-    [self.locationManager setPausesLocationUpdatesAutomatically:pausesLocationUpdatesAutomatically];
-    
-    //设置是否允许在后台定位
-    [self.locationManager setAllowsBackgroundLocationUpdates:allowsBackgroundLocationUpdates];
-    
-    //设置是否返回逆地址
-    [self.locationManager setLocatingWithReGeocode:needAddress];
-    
-    //设置定位超时时间
-    [self.locationManager setLocationTimeout:locationTimeout];
-    
-    //设置逆地理超时时间
-    [self.locationManager setReGeocodeTimeout:reGeocodeTimeout];
-
 }
 
 RCT_EXPORT_METHOD(cleanUp)
