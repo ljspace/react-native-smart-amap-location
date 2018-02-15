@@ -52,7 +52,7 @@ RCT_EXPORT_METHOD(init:(NSDictionary *)options)
 
 RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
 {
-    CLLocationAccuracy locationMode = kCLLocationAccuracyBest;
+    CLLocationAccuracy locationMode = kCLLocationAccuracyHundredMeters;
     BOOL pausesLocationUpdatesAutomatically = YES;
     BOOL allowsBackgroundLocationUpdates = NO;
     BOOL needAddress = YES;
@@ -105,6 +105,14 @@ RCT_EXPORT_METHOD(setOptions:(NSDictionary *)options)
             //设置逆地理超时时间
             [self.locationManager setReGeocodeTimeout:reGeocodeTimeout];
         }
+    } else {
+        [self.locationManager setDesiredAccuracy:locationMode];
+        [self.locationManager setPausesLocationUpdatesAutomatically:pausesLocationUpdatesAutomatically];
+        [self.locationManager setAllowsBackgroundLocationUpdates:allowsBackgroundLocationUpdates];
+        [self.locationManager setLocatingWithReGeocode:needAddress];
+        [self.locationManager setDistanceFilter:distanceFilter];
+        [self.locationManager setLocationTimeout:locationTimeout];
+        [self.locationManager setReGeocodeTimeout:reGeocodeTimeout];
     }
 }
 
@@ -178,17 +186,17 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
                                   @"latitude": @(location.coordinate.latitude),
                                   @"longitude": @(location.coordinate.longitude),
                                   },
-                          @"formattedAddress": regeocode.formattedAddress,
-                          @"country": regeocode.country,
-                          @"province": regeocode.province,
-                          @"city": regeocode.city,
-                          @"district": regeocode.district,
-                          @"citycode": regeocode.citycode,
-                          @"adcode": regeocode.adcode,
-                          @"street": regeocode.street,
-                          @"number": regeocode.number,
-                          @"POIName": regeocode.POIName,
-                          @"AOIName": regeocode.AOIName
+                          @"formattedAddress": regeocode.formattedAddress?:@"",
+                          @"country": regeocode.country?:@"",
+                          @"province": regeocode.province?:@"",
+                          @"city": regeocode.city?:@"",
+                          @"district": regeocode.district?:@"",
+                          @"citycode": regeocode.citycode?:@"",
+                          @"adcode": regeocode.adcode?:@"",
+                          @"street": regeocode.street?:@"",
+                          @"number": regeocode.number?:@"",
+                          @"POIName": regeocode.POIName?:@"",
+                          @"AOIName": regeocode.AOIName?:@""
                           };
         }
         else {
